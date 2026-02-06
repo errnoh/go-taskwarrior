@@ -31,7 +31,7 @@ Example program to read the current user's tasks:
 package main
 
 import (
-	"github.com/jubnzv/go-taskwarrior"
+	"github.com/errnoh/go-taskwarrior"
 )
 
 func main() {
