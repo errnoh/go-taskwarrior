@@ -100,6 +100,28 @@ type Annotation struct {
 
 All fields are optional except `description`, `status`, `uuid`, and `entry` (required by Taskwarrior JSON format).
 
+### Querying Tasks
+
+`QueryTasks(filter Filter)` retrieves tasks matching the specified filters using Taskwarrior's native filtering capabilities. This is more efficient than fetching all tasks and filtering in memory.
+
+```go
+filter := taskwarrior.Filter{
+    Project: "work",
+    Tags:    []string{"urgent", "high"},
+    Status:  "pending",
+    UUIDs:   []string{"uuid1", "uuid2"},
+}
+tasks, err := tw.QueryTasks(filter)
+```
+
+**Filter Fields:**
+- `Project` - Filter by project name (e.g., "MyProject")
+- `Tags` - Filter by tags (e.g., ["urgent", "work"])
+- `Status` - Filter by status (e.g., "pending", "completed")
+- `UUIDs` - Filter by specific UUIDs (e.g., ["uuid1", "uuid2"])
+
+**Note:** This uses Taskwarrior's command-line filtering for maximum efficiency and compatibility with Taskwarrior's full filter syntax.
+
 ### Validation
 
 `ValidateTask()` checks if a Task has all required fields and validates the status value:
