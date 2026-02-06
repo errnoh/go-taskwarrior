@@ -3,11 +3,12 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/jubnzv/go-taskwarrior"
 	"io"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/errnoh/go-taskwarrior"
 )
 
 var LOCAL_MAIL = "user@localhost"

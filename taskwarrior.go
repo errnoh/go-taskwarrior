@@ -82,3 +82,66 @@ func (tw *TaskWarrior) Commit() error {
 
 	return nil
 }
+
+// Filter represents query parameters for filtering tasks.
+// Used with QueryTasks() to filter exported task data.
+type Filter struct {
+	Project string // Filter by project (e.g., "MyProject")
+	Tags    []string // Filter by tags (e.g., ["urgent", "work"])
+	Status  string   // Filter by status (e.g., "pending", "completed")
+	UUIDs   []string // Filter by specific UUIDs (e.g., ["uuid1", "uuid2"])
+}
+
+// QueryTasks retrieves tasks matching the specified filters using Taskwarrior's
+// native filtering capabilities. This is more efficient than fetching all tasks
+// and filtering in memory.
+//
+// Example:
+//   filter := taskwarrior.Filter{Project: "work", Tags: ["urgent"]}
+//   tasks := tw.QueryTasks(filter)
+//
+// For more filter syntax, see: https://taskwarrior.org/docs/userguide/#filtering-tasks
+func (tw *TaskWarrior) QueryTasks(filter Filter) ([]Task, error) {
+	if tw == nil {
+		return nil, fmt.Errorf("Uninitialized taskwarrior database!")
+	}
+
+	// Build filter string for taskwarrior command
+	args := []string{"export"}
+
+	// Add filters
+	if filter.Project != "" {
+		args = append(args, fmt.Sprintf("project:%s", filter.Project))
+	}
+
+	for _, tag := range filter.Tags {
+		args = append(args, fmt.Sprintf("+%s", tag))
+	}
+
+	if filter.Status != "" {
+		args = append(args, fmt.Sprintf("status:%s", filter.Status))
+	}
+
+	for _, uuid := range filter.UUIDs {
+		args = append(args, fmt.Sprintf("uuid:%s", uuid))
+	}
+
+	rcOpt := "rc:" + tw.Config.ConfigPath
+	args = append([]string{rcOpt}, args...)
+
+	// Execute task command with filters
+	cmd := exec.Command("task", args...)
+	out, err := cmd.Output()
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal results
+	var tasks []Task
+	err = json.Unmarshal([]byte(out), &tasks)
+	if err != nil {
+		return nil, err
+	}
+
+	return tasks, nil
+}

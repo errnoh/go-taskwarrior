@@ -6,19 +6,20 @@
 package main
 
 import (
-	"github.com/jubnzv/go-taskwarrior"
+	"github.com/errnoh/go-taskwarrior"
 )
 
 func main() {
 	// Initialize new TaskWarrior instance.
-	tw, err := taskwarrior.NewTaskWarrior("~/.taskrc"); if err != nil {
+	tw, err := taskwarrior.NewTaskWarrior("~/.taskrc")
+	if err != nil {
 		panic(err)
 	}
 
 	// Get all available tasks
 	tw.FetchAllTasks()
 	// Now you can access to their JSON entries
-	//fmt.Println("Your taskwarrior tasks:\n", tw.Tasks)
+	// fmt.Println("Your taskwarrior tasks:\n", tw.Tasks)
 
 	// Pretty print for current taskwarrior instance
 	tw.PrintTasks()
