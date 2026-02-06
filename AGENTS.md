@@ -100,6 +100,17 @@ type Annotation struct {
 
 All fields are optional except `description`, `status`, `uuid`, and `entry` (required by Taskwarrior JSON format).
 
+### Validation
+
+`ValidateTask()` checks if a Task has all required fields and validates the status value:
+- Required: `description`, `status`, `uuid`, `entry`
+- Valid status values: `pending`, `completed`, `deleted`, `waiting`, `recurring`
+- Returns error if validation fails
+
+`ValidateTaskRC()` checks if TaskRC has valid configuration:
+- Required: `ConfigPath`
+- Returns error if validation fails
+
 ### TaskRC Structure
 ```go
 type TaskRC struct {

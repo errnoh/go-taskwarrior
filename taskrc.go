@@ -32,7 +32,6 @@
 package taskwarrior
 
 import (
-	"io/ioutil"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -86,12 +85,7 @@ func ParseTaskRC(configPath string) (*TaskRC, error) {
 	}
 
 	// Read the given configuration file content in temporary buffer
-	file, err := os.Open(configPath)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-	buf, err := ioutil.ReadAll(file)
+	buf, err := os.ReadFile(configPath)
 	if err != nil {
 		return nil, err
 	}
