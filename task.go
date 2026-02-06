@@ -35,7 +35,7 @@ type Task struct {
 	Imask       int     `json:"imask,omitempty"`
 	Parent      string  `json:"parent,omitempty"`
 	Modified    string  `json:"modified,omitempty"`
-	Depends     string  `json:"depends,omitempty"`
+	Depends     []string `json:"depends,omitempty"`
 	Tags        []string `json:"tags,omitempty"`
 	Annotations []Annotation `json:"annotations,omitempty"`
 	UDA         map[string]interface{} `json:"-"`

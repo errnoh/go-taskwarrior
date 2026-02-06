@@ -25,7 +25,7 @@ func TestTask_NewFields(t *testing.T) {
 		Imask:       0,
 		Parent:      "",
 		Modified:    "20260206T120000Z",
-		Depends:     "",
+		Depends:     []string{},
 		Tags: []string{
 			"work",
 			"important",
@@ -92,8 +92,8 @@ func TestTask_NewFields(t *testing.T) {
 		t.Errorf("Parent mismatch: expected empty string, got '%s'", task.Parent)
 	}
 
-	if task.Depends != "" {
-		t.Errorf("Depends mismatch: expected empty string, got '%s'", task.Depends)
+	if len(task.Depends) != 0 {
+		t.Errorf("Depends length mismatch: expected 0, got %d", len(task.Depends))
 	}
 
 	if len(task.Tags) != 2 {
@@ -138,17 +138,28 @@ func TestTask_NewFields(t *testing.T) {
 }
 
 func TestTask_DependsFormat(t *testing.T) {
-	// Test depends field with comma-separated UUIDs (as per Taskwarrior spec)
+	// Test depends field with UUID array (as per Taskwarrior JSON spec)
 	task := &Task{
 		Description: "Depends test",
 		Status:      "pending",
 		Uuid:        "00000000-0000-0000-0000-000000000001",
 		Entry:       "20260206T120000Z",
-		Depends:     "00000000-0000-0000-0000-000000000002,00000000-0000-0000-0000-000000000003",
+		Depends:     []string{
+			"00000000-0000-0000-0000-000000000002",
+			"00000000-0000-0000-0000-000000000003",
+		},
 	}
 
-	if task.Depends != "00000000-0000-0000-0000-000000000002,00000000-0000-0000-0000-000000000003" {
-		t.Errorf("Depends mismatch: expected '00000000-0000-0000-0000-000000000002,00000000-0000-0000-0000-000000000003', got '%s'", task.Depends)
+	if len(task.Depends) != 2 {
+		t.Errorf("Depends length mismatch: expected 2, got %d", len(task.Depends))
+	}
+
+	if task.Depends[0] != "00000000-0000-0000-0000-000000000002" {
+		t.Errorf("Depends[0] mismatch: expected '00000000-0000-0000-0000-000000000002', got '%s'", task.Depends[0])
+	}
+
+	if task.Depends[1] != "00000000-0000-0000-0000-000000000003" {
+		t.Errorf("Depends[1] mismatch: expected '00000000-0000-0000-0000-000000000003', got '%s'", task.Depends[1])
 	}
 }
 

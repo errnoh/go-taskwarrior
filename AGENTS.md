@@ -86,7 +86,7 @@ type Task struct {
     Imask       int     `json:"imask,omitempty"`
     Parent      string  `json:"parent,omitempty"`
     Modified    string  `json:"modified,omitempty"`
-    Depends     string  `json:"depends,omitempty"`
+    Depends     []string `json:"depends,omitempty"`
     Tags        []string `json:"tags,omitempty"`
     Annotations []Annotation `json:"annotations,omitempty"`
     UDA         map[string]interface{} `json:"-"`
@@ -186,7 +186,6 @@ Only `DataLocation` is currently supported for parsing.
 1. Add field to `Task` struct with appropriate JSON tag
 2. Consider `omitempty` for optional fields
 3. For User Defined Attributes (UDAs), use the `UDA map[string]interface{}` field which automatically preserves unknown fields
-4. Update Taskwarrior JSON format documentation in `task.md` if needed
 
 ### Adding New TaskRC Options
 1. Add field to `TaskRC` struct with `taskwarrior:"key"` tag
