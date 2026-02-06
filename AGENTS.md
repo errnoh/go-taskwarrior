@@ -75,20 +75,39 @@ type Task struct {
     Urgency     float32 `json:"urgency,omitempty"`
     Priority    string  `json:"priority,omitempty"`
     Due         string  `json:"due,omitempty"`
+    Start       string  `json:"start,omitempty"`
     End         string  `json:"end,omitempty"`
     Entry       string  `json:"entry,omitempty"`
+    Until       string  `json:"until,omitempty"`
+    Wait        string  `json:"wait,omitempty"`
+    Scheduled   string  `json:"scheduled,omitempty"`
+    Recur       string  `json:"recur,omitempty"`
+    Mask        string  `json:"mask,omitempty"`
+    Imask       int     `json:"imask,omitempty"`
+    Parent      string  `json:"parent,omitempty"`
     Modified    string  `json:"modified,omitempty"`
-    Depends     []string `json:"depends"`
+    Depends     string  `json:"depends,omitempty"`
+    Tags        []string `json:"tags,omitempty"`
+    Annotations []Annotation `json:"annotations,omitempty"`
+    UDA         map[string]interface{} `json:"-"`
+}
+
+type Annotation struct {
+    Entry        string `json:"entry"`
+    Description string `json:"description"`
 }
 ```
 
-Most fields use `omitempty`, but `Depends` is required (no omitempty).
+All fields are optional except `description`, `status`, `uuid`, and `entry` (required by Taskwarrior JSON format).
 
 ### TaskRC Structure
 ```go
 type TaskRC struct {
-    ConfigPath   string // Location of this .taskrc
-    DataLocation string `taskwarrior:"data.location"`
+    ConfigPath      string // Location of this .taskrc
+    DataLocation    string `taskwarrior:"data.location"`
+    DependencyTracking string `taskwarrior:"dependency.on"`
+    Recall          string `taskwarrior:"recurrence"`
+    RecallAfter     string `taskwarrior:"recurrence.limit"`
 }
 ```
 
@@ -133,7 +152,8 @@ Only `DataLocation` is currently supported for parsing.
 ### Adding New Task Attributes
 1. Add field to `Task` struct with appropriate JSON tag
 2. Consider `omitempty` for optional fields
-3. Update Taskwarrior JSON format documentation in `task.md` if needed
+3. For User Defined Attributes (UDAs), use the `UDA map[string]interface{}` field which automatically preserves unknown fields
+4. Update Taskwarrior JSON format documentation in `task.md` if needed
 
 ### Adding New TaskRC Options
 1. Add field to `TaskRC` struct with `taskwarrior:"key"` tag
@@ -153,7 +173,6 @@ Only `DataLocation` is currently supported for parsing.
 
 ### Unimplemented Features
 - Include directive parsing in TaskRC files (marked as TODO in `taskrc.go:121`)
-- Additional TaskRC options beyond DataLocation
 - Validation of Taskwarrior command availability
 
 ### Deprecated Imports

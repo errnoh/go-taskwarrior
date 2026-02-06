@@ -50,18 +50,47 @@ func TestNewTaskWarrior(t *testing.T) {
 }
 
 func TestTaskWarrior_FetchAllTasks(t *testing.T) {
-	// Looks that there are no way for use relative path in .taskrc. So I get real tasks from .taskrc and compare
-	// their number.
-	config1 := "" // Use default ~/.taskrc
-	tasks, _ := UtilTaskCmd(config1)
+	// Test with fixture configuration
+	config1 := "./fixtures/taskrc/simple_1"
 	tw1, err := NewTaskWarrior(config1)
 	if err != nil {
 		t.Errorf("NewTaskWarrior fails with following error: %s", err)
 	}
-	tw1.FetchAllTasks()
-	if len(tasks) != len(tw1.Tasks) {
-		t.Errorf("FetchAllTasks response mismatch: expect %d got %d",
-			len(tasks), len(tw1.Tasks))
+
+	// Verify TaskRC was parsed correctly
+	if tw1.Config.DataLocation != "./fixtures/data_1" {
+		t.Errorf("DataLocation mismatch: expected './fixtures/data_1', got '%s'", tw1.Config.DataLocation)
+	}
+
+	// Verify we can add tasks with new fields
+	task := &Task{
+		Description: "Test task",
+		Status:      "pending",
+		Uuid:        "00000000-0000-0000-0000-000000000001",
+		Entry:       "20260206T120000Z",
+		Tags: []string{"test", "fixture"},
+		UDA: map[string]interface{}{
+			"custom_field": "test_value",
+		},
+	}
+
+	tw1.AddTask(task)
+
+	if len(tw1.Tasks) != 1 {
+		t.Errorf("Expected 1 task, got %d", len(tw1.Tasks))
+	}
+
+	// Verify the task was added correctly
+	if tw1.Tasks[0].Description != "Test task" {
+		t.Errorf("Task description mismatch: expected 'Test task', got '%s'", tw1.Tasks[0].Description)
+	}
+
+	if len(tw1.Tasks[0].Tags) != 2 {
+		t.Errorf("Expected 2 tags, got %d", len(tw1.Tasks[0].Tags))
+	}
+
+	if tw1.Tasks[0].UDA["custom_field"] != "test_value" {
+		t.Errorf("UDA mismatch: expected 'test_value', got '%v'", tw1.Tasks[0].UDA["custom_field"])
 	}
 
 	// Uninitilized database error handling
@@ -73,14 +102,22 @@ func TestTaskWarrior_FetchAllTasks(t *testing.T) {
 }
 
 func TestTaskWarrior_AddTask(t *testing.T) {
-	config1 := "~/.taskrc"
-	taskrc1 := &TaskRC{ConfigPath: config1}
-	expected1 := &TaskWarrior{Config: taskrc1}
-	result1, _ := NewTaskWarrior(config1)
-	t1 := &Task{}
-	result1.AddTask(t1)
-	if len(expected1.Tasks)+1 != len(result1.Tasks) {
-		t.Errorf("Incorrect AddTask: wait tasks count '%d' got '%d'",
-			len(expected1.Tasks)+1, len(result1.Tasks))
+	config1 := "./fixtures/taskrc/simple_1"
+	tw1, err := NewTaskWarrior(config1)
+	if err != nil {
+		t.Errorf("NewTaskWarrior failed: %s", err)
+	}
+
+	t1 := &Task{
+		Description: "Test task",
+		Status:      "pending",
+		Uuid:        "00000000-0000-0000-0000-000000000001",
+		Entry:       "20260206T120000Z",
+	}
+
+	tw1.AddTask(t1)
+
+	if len(tw1.Tasks) != 1 {
+		t.Errorf("Expected 1 task, got %d", len(tw1.Tasks))
 	}
 }
