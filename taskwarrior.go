@@ -107,9 +107,9 @@ func (tw *TaskWarrior) QueryTasks(filter Filter) ([]Task, error) {
 	}
 
 	// Build filter string for taskwarrior command
-	args := []string{"export"}
+	args := []string{}
 
-	// Add filters
+	// Add filters before export subcommand
 	if filter.Project != "" {
 		args = append(args, fmt.Sprintf("project:%s", filter.Project))
 	}
@@ -125,6 +125,9 @@ func (tw *TaskWarrior) QueryTasks(filter Filter) ([]Task, error) {
 	for _, uuid := range filter.UUIDs {
 		args = append(args, fmt.Sprintf("uuid:%s", uuid))
 	}
+
+	// Add export subcommand
+	args = append(args, "export")
 
 	rcOpt := "rc:" + tw.Config.ConfigPath
 	args = append([]string{rcOpt}, args...)
