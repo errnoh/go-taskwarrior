@@ -4,9 +4,8 @@
 
 This is a Go library providing an API for Taskwarrior (a task management system). The library interacts with Taskwarrior's command-line interface rather than parsing its internal data files directly.
 
-**Module**: `github.com/msoulier/go-taskwarrior`
-**Go Version**: 1.23.4
-**Dependencies**: `github.com/jubnzv/go-taskwarrior v0.0.0-20220111032313-0ea4f466b47c`
+**Module**: `github.com/errnoh/go-taskwarrior`
+**Go Version**: 1.25.5
 
 ## Essential Commands
 
